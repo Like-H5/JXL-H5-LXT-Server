@@ -1,0 +1,13 @@
+{
+  "name": "JXL-H5-LXT-Server",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "repository": "git@github.com:wangshunzi/JXL-H5-LXT-Server.git",
+  "author": "王顺子(itlike-sz) <501562071@qq.com>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mysql": "^2.18.1",
+    "nodemailer": "^6.4.17"
+  }
+}
