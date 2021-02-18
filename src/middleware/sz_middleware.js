@@ -6,10 +6,11 @@ const {execSQL} = require("../tool/sz_mysql")
 
 
 let crossDomainM = (req, resp, next) => {
-    resp.header("Access-Control-Allow-Origin", "*")
-    resp.header("Access-Control-Allow-Methods", 'GET,PUT,POST,DELETE')
-    resp.header("Access-Control-Allow-Headers", "Content-Type")
-    next()
+    resp.header("Access-Control-Allow-Origin", "*");
+    resp.header("Access-Control-Allow-Headers", "Content-Type,Content-Length, Authorization, Accept,X-Requested-With");
+    resp.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
+    resp.header("X-Powered-By",' 3.2.1')
+    next();
 }
 
 let notFoundMF = function (notFoundFilePath) {
@@ -47,7 +48,6 @@ let rizhiM = (req, resp, next) => {
     next()
 }
 
-
 let handlerErrorMF = function (errorResponseFilePath) {
     if (!path.isAbsolute(errorResponseFilePath)) {
         throw Error("请传入一个绝对路径")
@@ -78,10 +78,39 @@ let handlerErrorMF = function (errorResponseFilePath) {
 
 }
 
+let toolM = (req, resp, next) => {
+    function ResponseTemp(code, msg, data) {
+        return {
+            code,
+            msg,
+            data
+        }
+    }
+    resp.tool = {
+        execSQL,
+        ResponseTemp,
+        execSQLAutoResponse: function (sql, successMsg="查询成功!", handlerResultF=result=>result) {
+            execSQL(sql).then(result=>{
+                resp.send(ResponseTemp(0, successMsg, handlerResultF(result)))
+            }).catch(error=>{
+                resp.send(ResponseTemp(-1, "Api出现错误", null))
+            })
+        },
+        execSQLTEMPAutoResponse: function (sqlTEMP, values=[], successMsg="查询成功!", handlerResultF=result=>result) {
+            execSQL(sqlTEMP, values).then(result=>{
+                resp.send(ResponseTemp(0, successMsg, handlerResultF(result)))
+            }).catch(error=>{
+                resp.send(ResponseTemp(-1, "Api出现错误", null))
+            })
+        }
+    }
+    next();
+}
 
 module.exports = {
     notFoundMF,
+    handlerErrorMF,
     rizhiM,
     crossDomainM,
-    handlerErrorMF
+    toolM
 }
