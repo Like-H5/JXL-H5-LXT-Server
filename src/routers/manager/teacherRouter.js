@@ -41,19 +41,20 @@ router.get("/delete", (req, resp) => {
     resp.tool.execSQL(`select header from t_teacher where id=?;`, [id], result => {
         if (result.length > 0) {
             let filePath = path.resolve(__dirname, "../../public" + result[0].header)
-            fs.unlink(filePath, err => {
-                // 2. 删除记录
-                let sql = `delete from t_teacher where id=?;`
-                resp.tool.execSQL(sql, [id], result => {
-                    if (result.affectedRows > 0) {
-                        resp.send(resp.tool.ResponseTemp(0, "删除成功"))
-                    } else {
-                        resp.send(resp.tool.ResponseTemp(-1, "删除失败"))
-                    }
-
-                })
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath)
+            }
+            // 2. 删除记录
+            let sql = `delete from t_teacher where id=?;`
+            resp.tool.execSQL(sql, [id], result => {
+                if (result.affectedRows > 0) {
+                    resp.send(resp.tool.ResponseTemp(0, "删除成功"))
+                } else {
+                    resp.send(resp.tool.ResponseTemp(-1, "删除失败"))
+                }
 
             })
+
         }
     })
 

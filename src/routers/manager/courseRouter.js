@@ -80,13 +80,13 @@ router.get("/list", (req, resp) => {
     })
 })
 router.get("/intro", (req, resp) => {
-    const {course_id} = req.query;
-    if (!course_id) {
+    const {id} = req.query;
+    if (!id) {
         resp.send(resp.tool.ResponseTemp(-2, "请传入课程ID"))
         return;
     }
     let sql = `select id, intro from t_course where id=?;`
-    resp.tool.execSQLTEMPAutoResponse(sql, [course_id], result => {
+    resp.tool.execSQLTEMPAutoResponse(sql, [id], result => {
         if (result.length > 0) return result[0];
         return {}
     })
@@ -147,13 +147,13 @@ router.get("/comments", (req, resp) => {
     resp.tool.execSQLTEMPAutoResponse(sql, [course_id])
 })
 router.get("/detail", (req, resp) => {
-    const {course_id} = req.query
-    if (!course_id) {
+    const {id} = req.query
+    if (!id) {
         resp.send(resp.tool.ResponseTemp(-2, "请传入课程ID"))
         return;
     }
     let sql = `select * from t_course where id=?;`
-    resp.tool.execSQLTEMPAutoResponse(sql, [course_id], "查询课程详情成功!",result => {
+    resp.tool.execSQLTEMPAutoResponse(sql, [id], "查询课程详情成功!",result => {
         if (result.length > 0) return result[0];
         return {}
     })
